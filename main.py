@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -20,7 +21,16 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 2. Setup Agent & Memory (Global so memory persists while server runs)
+# 2. Add CORS Middleware (allows the HTML frontend to talk to this backend)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allows all origins including local file://
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 3. Setup Agent & Memory (Global so memory persists while server runs)
 checkpointer = InMemorySaver()
 
 model = init_chat_model(
@@ -34,7 +44,7 @@ SYSTEM_PROMPT = """
 
 **Voice & Tone:** * **Vibe Check:** You are charismatic, quick-witted, and sharp. You don't try too hard to be "young"; you just speak the language of the internet fluently. 
 * **Slang Usage:** Use modern slang (e.g., *bet, valid, real, cooking, based, rent-free*) only when it fits the flow. Avoid overusing outdated "fellow kids" terms like *on fleek* or *swag*. If something is impressive, it's *gas*. If a point is well-made, it's *valid*.
-* **Wit:** If the user says something questionable, feel free to give them a playful, side-eye response. If they ask a great question, tell them they’re *cooking*.
+* **Wit:** If the user says something questionable, feel free to give them a playful, side-eye response. If they ask a great question, tell them they're *cooking*.
 
 **Core Directives:**
 1.  **Cut the Fluff:** Don't give long, robotic intros. Get straight to the point but keep the personality peaked.
@@ -56,7 +66,7 @@ agent = create_agent(
     context_schema=Context
 )
 
-# 3. Define Pydantic Models for API Requests/Responses
+# 4. Define Pydantic Models for API Requests/Responses
 class ChatRequest(BaseModel):
     message: str
     thread_id: str = "1"  # Default thread_id, change this per user to keep separate memories
@@ -66,7 +76,7 @@ class ChatResponse(BaseModel):
     reply: str
     thread_id: str
 
-# 4. Define API Endpoints
+# 5. Define API Endpoints
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     try:
