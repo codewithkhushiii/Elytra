@@ -114,6 +114,12 @@
     opacity: 0.8;
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
   .status-pill {
     display: flex;
     align-items: center;
@@ -135,6 +141,50 @@
   @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(212,255,0,0.4); }
     50% { opacity: 0.8; transform: scale(1.2); box-shadow: 0 0 0 6px rgba(212,255,0,0); }
+  }
+
+  /* New Chat Button */
+  #new-chat-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    border: 1px solid rgba(212,255,0,0.3);
+    color: var(--lime);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    cursor: none;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  #new-chat-btn:hover {
+    background: rgba(212,255,0,0.08);
+    border-color: var(--lime);
+    box-shadow: 0 0 16px rgba(212,255,0,0.2);
+  }
+  #new-chat-btn:active {
+    transform: scale(0.96);
+  }
+  #new-chat-btn svg {
+    transition: transform 0.3s ease;
+  }
+  #new-chat-btn:hover svg {
+    transform: rotate(90deg);
+  }
+
+  /* New Chat flash animation on the messages area */
+  @keyframes flashReset {
+    0% { opacity: 1; }
+    30% { opacity: 0; }
+    60% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+  .flash-reset {
+    animation: flashReset 0.4s ease forwards;
   }
 
   .thread-area {
@@ -314,6 +364,27 @@
     text-transform: uppercase;
   }
 
+  /* Session divider */
+  .session-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+    animation: msgIn 0.3s ease both;
+  }
+  .session-divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,255,0,0.2), transparent);
+  }
+  .session-divider-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(212,255,0,0.4);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
   /* Input area */
   footer {
     padding: 20px 32px 24px;
@@ -419,10 +490,10 @@
 
   /* Glitch text effect */
   @keyframes glitch {
-    0%, 90%, 100% { text-shadow: none; clip-path: none; }
+    0%, 90%, 100% { text-shadow: 0 0 30px rgba(212,255,0,0.5); clip-path: none; }
     91% { text-shadow: -2px 0 var(--hot); clip-path: polygon(0 20%, 100% 20%, 100% 30%, 0 30%); }
     92% { text-shadow: 2px 0 var(--cyan); clip-path: polygon(0 60%, 100% 60%, 100% 70%, 0 70%); }
-    93% { text-shadow: none; clip-path: none; }
+    93% { text-shadow: 0 0 30px rgba(212,255,0,0.5); clip-path: none; }
   }
 
   .logo { animation: glitch 8s infinite; }
@@ -477,6 +548,91 @@
     transition: color 0.2s;
   }
   .char-count.warn { color: var(--hot); }
+
+  /* Confirm modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: #111;
+    border: 1px solid rgba(212,255,0,0.2);
+    border-radius: 20px;
+    padding: 32px 36px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 60px rgba(212,255,0,0.05);
+  }
+  .modal-overlay.show .modal {
+    transform: scale(1) translateY(0);
+  }
+  .modal-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--lime);
+    margin-bottom: 8px;
+  }
+  .modal-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .modal-btn {
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    cursor: none;
+    border: none;
+    transition: all 0.2s;
+  }
+  .modal-btn.cancel {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: rgba(255,255,255,0.5);
+  }
+  .modal-btn.cancel:hover {
+    border-color: rgba(255,255,255,0.3);
+    color: white;
+  }
+  .modal-btn.confirm {
+    background: var(--lime);
+    color: #0a0a0a;
+    font-weight: 700;
+  }
+  .modal-btn.confirm:hover {
+    box-shadow: 0 0 20px rgba(212,255,0,0.4);
+    transform: scale(1.03);
+  }
 </style>
 </head>
 <body>
@@ -487,6 +643,19 @@
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
 
+<!-- New Chat Confirm Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">NEW CHAT?</div>
+    <div class="modal-sub">this will ghost the current convo<br>no cap, it's gone forever bestie</div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal()">nah keep it</button>
+      <button class="modal-btn confirm" onclick="confirmNewChat()">yep, reset it</button>
+    </div>
+  </div>
+</div>
+
 <div id="app">
   <header>
     <div class="logo">no cap AI</div>
@@ -494,9 +663,18 @@
       <label>THREAD</label>
       <input id="thread-id" value="main-chat" maxlength="20" spellcheck="false">
     </div>
-    <div class="status-pill">
-      <div class="status-dot"></div>
-      <span>COOKING RN</span>
+    <div class="header-right">
+      <button id="new-chat-btn" onclick="openNewChatModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        NEW CHAT
+      </button>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>COOKING RN</span>
+      </div>
     </div>
   </header>
 
@@ -650,6 +828,75 @@
     btn.appendChild(r);
     setTimeout(() => r.remove(), 500);
   }
+
+  // ── NEW CHAT LOGIC ──────────────────────────────────────────────
+
+  function openNewChatModal() {
+    // If no messages, just reset silently without confirming
+    const msgs = document.getElementById('messages');
+    const hasMessages = msgs.querySelector('.msg');
+    if (!hasMessages) {
+      showToast('already fresh bestie 💅');
+      return;
+    }
+    document.getElementById('modal-overlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  function confirmNewChat() {
+    closeModal();
+
+    const msgs = document.getElementById('messages');
+
+    // Flash the messages area
+    msgs.classList.add('flash-reset');
+    setTimeout(() => msgs.classList.remove('flash-reset'), 400);
+
+    // After flash, wipe messages and restore empty state
+    setTimeout(() => {
+      msgs.innerHTML = `
+        <div class="empty-state" id="empty-state">
+          <div class="empty-big">SAY LESS.</div>
+          <div class="empty-sub">// fresh chat, no cap //</div>
+        </div>
+      `;
+      msgCount = 0;
+    }, 200);
+
+    // Generate new thread ID so backend memory is fresh
+    const newThread = 'chat-' + Math.random().toString(36).slice(2, 8);
+    document.getElementById('thread-id').value = newThread;
+
+    showToast('new chat started, let\'s cook 🍳');
+  }
+
+  // Add session divider when resuming a named thread
+  function addSessionDivider(label) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'session-divider';
+    div.innerHTML = `
+      <div class="session-divider-line"></div>
+      <div class="session-divider-label">${label}</div>
+      <div class="session-divider-line"></div>
+    `;
+    msgs.appendChild(div);
+  }
+
+  // ── SEND MESSAGE ────────────────────────────────────────────────
 
   async function sendMessage(e) {
     const text = input.value.trim();
