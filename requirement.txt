@@ -1,0 +1,5 @@
+fastapi
+langchain
+langchain-groq
+langgraph
+dotenv
